@@ -34,7 +34,7 @@ const tokenizers = {
   },
 
   unit: word => {
-    if (word in units) return { type: 'unit', value: units[word] };
+    if (word in units) return { type: 'unit', name: units[word] };
     return null;
   },
 
@@ -51,13 +51,17 @@ const tokenizers = {
   date: word => {
     switch (word) {
       case 'now':
-        return { type: 'date', value: Date.now() };
+        return { type: 'range', date: Date.now() };
+      case 'today':
+        return { type: 'range', date: moment().startOf(moment.DAY), delta: units.DAY };
       case 'yesterday':
-        return { type: 'date', value: Date.now() - (1 * DAY) };
+        return { type: 'range', date: moment().startOf(moment.DAY)., delta: units.DAY };
 
     }
     return null;
-  }
+  },
+
+
 }
 
 const tokenize = word => {
@@ -105,13 +109,11 @@ const parse = tokens => {
   }
 
   throw new Error(`Parse Error: Unexpected token ${first.type}`);
-
 }
-
 
 function tempio(string) {
   let words = string.split(' ');
-  return parse(words.map(tokenize));
+  return new Date(parse(words.map(tokenize))[0].value);
 }
 
 module.exports = tempio;
